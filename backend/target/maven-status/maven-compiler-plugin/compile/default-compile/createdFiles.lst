@@ -1,0 +1,15 @@
+com\angadiq\ecommerce\entity\Category.class
+com\angadiq\ecommerce\repository\UserRepository.class
+com\angadiq\ecommerce\repository\CartItemRepository.class
+com\angadiq\ecommerce\entity\Order.class
+com\angadiq\ecommerce\repository\OrderItemRepository.class
+com\angadiq\ecommerce\EcommerceApplication.class
+com\angadiq\ecommerce\entity\Cart.class
+com\angadiq\ecommerce\repository\CategoryRepository.class
+com\angadiq\ecommerce\entity\OrderItem.class
+com\angadiq\ecommerce\repository\OrderRepository.class
+com\angadiq\ecommerce\repository\ProductRepository.class
+com\angadiq\ecommerce\entity\User.class
+com\angadiq\ecommerce\entity\CartItem.class
+com\angadiq\ecommerce\entity\Product.class
+com\angadiq\ecommerce\repository\CartRepository.class
