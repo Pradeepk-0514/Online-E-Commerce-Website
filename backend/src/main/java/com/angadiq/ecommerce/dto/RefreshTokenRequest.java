@@ -7,10 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class LoginRequest {
+public class RefreshTokenRequest {
 
-    private String email;
-
-    private String password;
+    private String refreshToken;
 
 }
