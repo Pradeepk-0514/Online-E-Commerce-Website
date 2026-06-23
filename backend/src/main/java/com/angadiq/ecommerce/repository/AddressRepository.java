@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.angadiq.ecommerce.entity.Order;
+import com.angadiq.ecommerce.entity.Address;
 
-public interface OrderRepository
-        extends JpaRepository<Order, Long> {
+public interface AddressRepository
+        extends JpaRepository<Address, Long> {
 
-    List<Order> findByUserId(
+    List<Address> findByUserId(
 
             Long userId
 

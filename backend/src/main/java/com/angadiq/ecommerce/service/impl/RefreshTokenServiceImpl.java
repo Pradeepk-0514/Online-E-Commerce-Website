@@ -9,10 +9,11 @@ import org.springframework.stereotype.Service;
 import com.angadiq.ecommerce.entity.RefreshToken;
 import com.angadiq.ecommerce.entity.User;
 import com.angadiq.ecommerce.repository.RefreshTokenRepository;
+import com.angadiq.ecommerce.service.RefreshTokenService;
 
 @Service
 
-public class RefreshTokenServiceImpl {
+public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Value("${jwt.refresh.expiration}")
 
@@ -21,27 +22,136 @@ public class RefreshTokenServiceImpl {
     private final RefreshTokenRepository refreshTokenRepository;
 
     public RefreshTokenServiceImpl(
-            RefreshTokenRepository refreshTokenRepository) {
+
+            RefreshTokenRepository refreshTokenRepository
+
+    ) {
 
         this.refreshTokenRepository = refreshTokenRepository;
 
     }
 
-    public RefreshToken createRefreshToken(User user) {
+    @Override
 
-        RefreshToken refreshToken = new RefreshToken();
+    public RefreshToken createRefreshToken(
 
-        refreshToken.setUser(user);
+            User user
 
-        refreshToken.setToken(UUID.randomUUID().toString());
+    ) {
 
-        refreshToken.setExpiryDate(
+        RefreshToken refreshToken =
 
-                Instant.now().plusMillis(refreshExpiration)
+                new RefreshToken();
+
+        refreshToken.setUser(
+
+                user
 
         );
 
-        return refreshTokenRepository.save(refreshToken);
+        refreshToken.setToken(
+
+                UUID.randomUUID()
+
+                        .toString()
+
+        );
+
+        refreshToken.setExpiryDate(
+
+                Instant.now()
+
+                        .plusMillis(
+
+                                refreshExpiration
+
+                        )
+
+        );
+
+        return refreshTokenRepository.save(
+
+                refreshToken
+
+        );
+
+    }
+
+    @Override
+
+    public RefreshToken verifyRefreshToken(
+
+            String token
+
+    ) {
+
+        RefreshToken refreshToken =
+
+                refreshTokenRepository
+
+                        .findByToken(
+
+                                token
+
+                        )
+
+                        .orElseThrow(
+
+                                () -> new RuntimeException(
+
+                                        "Refresh token not found"
+
+                                )
+
+                        );
+
+        if (
+
+                refreshToken
+
+                        .getExpiryDate()
+
+                        .isBefore(
+
+                                Instant.now()
+
+                        )
+
+        ) {
+
+            refreshTokenRepository.delete(
+
+                    refreshToken
+
+            );
+
+            throw new RuntimeException(
+
+                    "Refresh token expired"
+
+            );
+
+        }
+
+        return refreshToken;
+
+    }
+
+    @Override
+
+    public void deleteByUser(
+
+            User user
+
+    ) {
+
+        refreshTokenRepository
+
+                .deleteByUser(
+
+                        user
+
+                );
 
     }
 

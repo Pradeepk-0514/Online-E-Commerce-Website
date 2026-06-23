@@ -10,12 +10,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class AuthResponse {
+public class AddToCartRequest {
 
-    private String accessToken;
+    private Long userId;
 
-    private String refreshToken;
+    private Long productId;
 
-    private String message;
+    private Integer quantity;
 
 }
