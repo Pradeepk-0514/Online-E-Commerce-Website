@@ -15,144 +15,91 @@ import com.angadiq.ecommerce.service.RefreshTokenService;
 
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    @Value("${jwt.refresh.expiration}")
 
-    private long refreshExpiration;
+@Value("${jwt.refresh.expiration}")
+private long refreshExpiration;
 
-    private final RefreshTokenRepository refreshTokenRepository;
+private final RefreshTokenRepository refreshTokenRepository;
 
-    public RefreshTokenServiceImpl(
+public RefreshTokenServiceImpl(
+        RefreshTokenRepository refreshTokenRepository
+) {
+    this.refreshTokenRepository = refreshTokenRepository;
+}
 
-            RefreshTokenRepository refreshTokenRepository
+@Override
+public RefreshToken createRefreshToken(
+        User user
+) {
 
+    RefreshToken refreshToken =
+
+            refreshTokenRepository
+                    .findByUser(user)
+                    .orElse(new RefreshToken());
+
+    refreshToken.setUser(
+            user
+    );
+
+    refreshToken.setToken(
+            UUID.randomUUID().toString()
+    );
+
+    refreshToken.setExpiryDate(
+            Instant.now()
+                    .plusMillis(refreshExpiration)
+    );
+
+    return refreshTokenRepository.save(
+            refreshToken
+    );
+}
+
+@Override
+public RefreshToken verifyRefreshToken(
+        String token
+) {
+
+    RefreshToken refreshToken =
+
+            refreshTokenRepository
+                    .findByToken(token)
+                    .orElseThrow(
+                            () -> new RuntimeException(
+                                    "Refresh token not found"
+                            )
+                    );
+
+    if (
+            refreshToken
+                    .getExpiryDate()
+                    .isBefore(
+                            Instant.now()
+                    )
     ) {
 
-        this.refreshTokenRepository = refreshTokenRepository;
-
-    }
-
-    @Override
-
-    public RefreshToken createRefreshToken(
-
-            User user
-
-    ) {
-
-        RefreshToken refreshToken =
-
-                new RefreshToken();
-
-        refreshToken.setUser(
-
-                user
-
-        );
-
-        refreshToken.setToken(
-
-                UUID.randomUUID()
-
-                        .toString()
-
-        );
-
-        refreshToken.setExpiryDate(
-
-                Instant.now()
-
-                        .plusMillis(
-
-                                refreshExpiration
-
-                        )
-
-        );
-
-        return refreshTokenRepository.save(
-
+        refreshTokenRepository.delete(
                 refreshToken
-
         );
 
+        throw new RuntimeException(
+                "Refresh token expired"
+        );
     }
 
-    @Override
+    return refreshToken;
+}
 
-    public RefreshToken verifyRefreshToken(
+@Override
+public void deleteByUser(
+        User user
+) {
 
-            String token
+    refreshTokenRepository.deleteByUser(
+            user
+    );
+}
 
-    ) {
-
-        RefreshToken refreshToken =
-
-                refreshTokenRepository
-
-                        .findByToken(
-
-                                token
-
-                        )
-
-                        .orElseThrow(
-
-                                () -> new RuntimeException(
-
-                                        "Refresh token not found"
-
-                                )
-
-                        );
-
-        if (
-
-                refreshToken
-
-                        .getExpiryDate()
-
-                        .isBefore(
-
-                                Instant.now()
-
-                        )
-
-        ) {
-
-            refreshTokenRepository.delete(
-
-                    refreshToken
-
-            );
-
-            throw new RuntimeException(
-
-                    "Refresh token expired"
-
-            );
-
-        }
-
-        return refreshToken;
-
-    }
-
-    @Override
-
-    public void deleteByUser(
-
-            User user
-
-    ) {
-
-        refreshTokenRepository
-
-                .deleteByUser(
-
-                        user
-
-                );
-
-    }
 
 }

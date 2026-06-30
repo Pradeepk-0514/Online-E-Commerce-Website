@@ -75,11 +75,23 @@ public class SecurityConfig {
 
                 .requestMatchers(
 
-                    "/api/auth/**",
+                    "/api/auth/**"
+
+                )
+
+                .permitAll()
+
+                .requestMatchers(
 
                     "/api/categories/**",
 
-                    "/api/products/**",
+                    "/api/products/**"
+
+                )
+
+                .permitAll()
+
+                .requestMatchers(
 
                     "/api/cart/**",
 
@@ -87,7 +99,7 @@ public class SecurityConfig {
 
                 )
 
-                .permitAll()
+                .authenticated()
 
                 .anyRequest()
 

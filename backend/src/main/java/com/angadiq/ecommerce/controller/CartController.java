@@ -3,7 +3,12 @@ package com.angadiq.ecommerce.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.angadiq.ecommerce.dto.AddToCartRequest;
 import com.angadiq.ecommerce.dto.CartResponse;
@@ -38,9 +43,21 @@ public class CartController {
 
     ) {
 
+        String email =
+
+                SecurityContextHolder
+
+                        .getContext()
+
+                        .getAuthentication()
+
+                        .getName();
+
         return ResponseEntity.ok(
 
                 cartService.addToCart(
+
+                        email,
 
                         request
 
@@ -50,43 +67,27 @@ public class CartController {
 
     }
 
-    @GetMapping("/{userId}")
-
-    public ResponseEntity<List<CartItem>>
-
-    getCart(
-
-            @PathVariable Long userId
-
-    ) {
-
-        return ResponseEntity.ok(
-
-                cartService.getCartItems(
-
-                        userId
-
-                )
-
-        );
-
-    }
-
-    @GetMapping("/response/{userId}")
+    @GetMapping("/me")
 
     public ResponseEntity<List<CartResponse>>
 
-    getCartResponse(
+    getMyCart() {
 
-            @PathVariable Long userId
+        String email =
 
-    ) {
+                SecurityContextHolder
+
+                        .getContext()
+
+                        .getAuthentication()
+
+                        .getName();
 
         return ResponseEntity.ok(
 
                 cartService.getCartResponse(
 
-                        userId
+                        email
 
                 )
 

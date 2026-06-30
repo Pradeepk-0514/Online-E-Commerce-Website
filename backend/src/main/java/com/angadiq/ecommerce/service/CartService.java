@@ -10,19 +10,15 @@ public interface CartService {
 
     CartItem addToCart(
 
+            String email,
+
             AddToCartRequest request
-
-    );
-
-    List<CartItem> getCartItems(
-
-            Long userId
 
     );
 
     List<CartResponse> getCartResponse(
 
-            Long userId
+            String email
 
     );
 

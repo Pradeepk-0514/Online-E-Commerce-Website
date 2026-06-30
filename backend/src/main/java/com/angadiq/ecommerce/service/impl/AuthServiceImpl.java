@@ -49,10 +49,16 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
 
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponse register(
+
+            RegisterRequest request
+
+    ) {
 
         if (userRepository.findByEmail(
+
                 request.getEmail()
+
         ).isPresent()) {
 
             return new AuthResponse(
@@ -70,35 +76,53 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
 
         user.setFullName(
+
                 request.getFullName()
+
         );
 
         user.setEmail(
+
                 request.getEmail()
+
         );
 
         user.setPassword(
 
                 passwordEncoder.encode(
+
                         request.getPassword()
+
                 )
 
         );
 
-        user.setRole("USER");
+        user.setRole(
 
-        userRepository.save(user);
+                "USER"
+
+        );
+
+        userRepository.save(
+
+                user
+
+        );
 
         String accessToken =
 
                 jwtService.generateToken(
+
                         user.getEmail()
+
                 );
 
         RefreshToken refreshToken =
 
                 refreshTokenService.createRefreshToken(
+
                         user
+
                 );
 
         return new AuthResponse(
@@ -116,13 +140,17 @@ public class AuthServiceImpl implements AuthService {
     @Override
 
     public AuthResponse login(
+
             LoginRequest request
+
     ) {
 
         User user = userRepository
 
                 .findByEmail(
+
                         request.getEmail()
+
                 )
 
                 .orElseThrow(
@@ -135,13 +163,43 @@ public class AuthServiceImpl implements AuthService {
 
                 );
 
-        if (!passwordEncoder.matches(
+        // DEBUG
 
-                request.getPassword(),
+        System.out.println(
 
-                user.getPassword()
+                "Entered Password : "
 
-        )) {
+                + request.getPassword()
+
+        );
+
+        System.out.println(
+
+                "Database Password : "
+
+                + user.getPassword()
+
+        );
+
+        boolean passwordMatches =
+
+                passwordEncoder.matches(
+
+                        request.getPassword(),
+
+                        user.getPassword()
+
+                );
+
+        System.out.println(
+
+                "Password Match : "
+
+                + passwordMatches
+
+        );
+
+        if (!passwordMatches) {
 
             throw new RuntimeException(
 
@@ -154,13 +212,17 @@ public class AuthServiceImpl implements AuthService {
         String accessToken =
 
                 jwtService.generateToken(
+
                         user.getEmail()
+
                 );
 
         RefreshToken refreshToken =
 
                 refreshTokenService.createRefreshToken(
+
                         user
+
                 );
 
         return new AuthResponse(
